@@ -20,31 +20,32 @@ class AsyncTimezoneHandler():
         async with aiofiles.open(self.path, 'r') as file:
             data = json.loads(await file.read())
         
-        print(f"Read: {data[user_id]} from {data}")
         try:
             return data[user_id]
         except Exception as e:
-            print("Shit's fucked on line 27")
             return e
     
-    def date_from_string(dt_string: str, timezone: str):
-        print(f"date_from_time({dt_string}, {timezone})")
+    def date_from_string(self, dt_string: str, timezone: str):
         try:
-            dt = datetime.strptime(dt_string, "%Y-%m-%d %H:%M:%S")
+            if len(dt_string) > 16:
+                dt = datetime.strptime(dt_string, "%Y-%m-%d %H:%M:%S")
+            else:
+                dt = datetime.strptime(dt_string, "%Y-%m-%d %H:%M")
             dt = pytz.timezone(timezone).localize(dt)
         except Exception as e:
-            print("Shit's fucked on line 36")
             return e
         return dt
     
-    async def get_local_datetime_all(self, dt: datetime):
+    async def get_local_datetime_all(self, dt: datetime, user: str):
         async with aiofiles.open(self.path, 'r') as file:
             data = json.loads(await file.read())
         
         try: 
             res = []
-            for key, value in data.items():
-                res.append({key: pytz.timezone(value).localize(dt)})
+            for usr, tz in data.items():
+                if usr == user:
+                    continue
+                res.append({usr: dt.astimezone(pytz.timezone(tz))})
             
             return res
         except Exception as e:

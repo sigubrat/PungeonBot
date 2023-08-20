@@ -108,36 +108,36 @@ async def add_user(interaction: discord.Interaction, continent: Literal['America
 
 @client.tree.command()
 @app_commands.describe(
-    date_time="Date and time in this format only: 2023-08-23 16:00:00"
+    date_time="Date and time in this format: 2023-08-23 16:00:00 (seconds are optional)"
 )
 async def suggest_time(interaction: discord.Interaction, date_time: str):
     """Suggest a datetime and see what time it is for everyone else"""
     print(f"User {interaction.user} has suggested time: {date_time}")
     
     timezone = await timezoneHandler.read_user(str(interaction.user))
-    if isinstance(timezone, Exception):
-        print("Timezone is fucked")
-        await interaction.response.send_message("Pleaaseee provide a proper datetime")
-        return
-    print("Timezone:", timezone)
-    dt = timezoneHandler.date_from_string(timezone, date_time)
-    print("dt", dt)
+    
+    dt = timezoneHandler.date_from_string(date_time, timezone)
     if isinstance(dt, Exception):
-        print("Dt is fucked")
         await interaction.response.send_message("Pleaaseee provide a proper datetime")
         return
     
-    users = await timezoneHandler.get_local_datetime_all(dt)
+    users = await timezoneHandler.get_local_datetime_all(dt, str(interaction.user))
     if isinstance(users, Exception):
         await interaction.response.send_message("I'm sorry, but something fucky happened")
         return
 
-    retval = ""
+    formatted_response = [f"User {interaction.user.display_name} suggested time: {dt.strftime('%d-%m-%Y %H:%M %Z')}\n``` "]
+    formatted_response += "—" *44 + "\n"
     for user in users:
-        for key, val in user.items():
-            retval += f"{key} - {val}\n"
+        for username, val in user.items():
+            formatted_response.append(f"| @{username:<15} | {val.strftime('%d-%m-%Y %H:%M %Z')} |\n")
 
-    await interaction.response.send_message(retval)
+    formatted_response += " "
+    formatted_response += "—" *44
+    formatted_response += "```"
+    await interaction.response.send_message("".join(formatted_response))
+
+
 
 client.run(token)
 
