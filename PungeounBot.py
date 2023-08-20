@@ -32,7 +32,6 @@ class BotClient(discord.Client):
         await self.tree.sync(guild=MY_GUILD)
 
 client = BotClient(intents=intents)
-client.run(token)
 
 @client.event
 async def on_ready():
@@ -41,22 +40,24 @@ async def on_ready():
 
 @client.tree.command()
 @app_commands.describe(
-    dice="What dice you want to use (1d20, 1d6, 2d4 etc)"
+    rolls="How many times do you want to roll?",
+    sides="Which die are you rolling? (d4, d6, d8, d10, d12, d20)"
 )
-async def roll(interaction: discord.Interaction, dice: str):
-    """Rolls a dice in NdN format where N is a number"""
-    try:
-        rolls, limit = map(int, dice.split('d'))
-    except Exception:
-        await interaction.response.send_message("Format must be in NdN e.g., 1d20")
-        return
+async def roll(interaction: discord.Interaction, rolls: int, sides: int):
+    """Rolls a dice in NdN format (d4, d6, d8, d10, d12, d20)"""
     
-    roll = [random.randint(1, limit) for r in range(rolls)]
-    total = sum(roll)
-    result = ', '.join(str(roll))
-    result += f' = {total}'
+    if rolls < 1:
+        await interaction.response.send_message(f"Minimum 1 roll is required you silly sausage :)")
+
+    if sides not in [4, 6, 8, 10, 12, 20]:
+        await interaction.response.send_message(f"The die you provided ({rolls}d{sides}) does not match any DnD standard die")
+
+    roll_results = [random.randint(1, sides) for _ in range(rolls)]
+    total = sum(roll_results)
+    rolls_string = ", ".join(map(str, roll_results))
+    result = f"[{rolls_string}] = {total}"
     await interaction.response.send_message(result)
 
 
-
+client.run(token)
 
