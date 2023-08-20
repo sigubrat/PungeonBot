@@ -8,6 +8,8 @@ TBA
 ## Libraries & dependencies
 * [discord.py by Rapptz](https://github.com/Rapptz/discord.py/tree/master)
 * Written in Python 3.10.11
+* pytz
+* aiofiles
 
 ## How to use
 1. Clone the repo and navigate to it
