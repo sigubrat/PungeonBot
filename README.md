@@ -26,7 +26,7 @@ A small bot for a private discord server.
 
 ## How to use
 1. Clone the repo and navigate to it
-2. Add a `.secrets/' folder to the root directory of your project.
+2. Add a `.secrets/` folder to the root directory of your project.
     1. Add two files: `touch .secrets/config.json` and `touch .secrets/users.json`
     2. Add an empty JSON object to both and save. 
 4. Run using `python3.10 PungeounBot.py`
