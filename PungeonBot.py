@@ -126,14 +126,14 @@ async def suggest_time(interaction: discord.Interaction, date_time: str):
         await interaction.response.send_message("I'm sorry, but something fucky happened")
         return
 
-    formatted_response = [f"User {interaction.user.display_name} suggested time: {dt.strftime('%d-%m-%Y %H:%M %Z')}\n``` "]
-    formatted_response += "—" *43 + "\n"
+    formatted_response = [f"User {interaction.user.display_name} suggested time: {dt.strftime('%d.%m %H:%M')}\n``` "]
+    formatted_response += "—" * 32 + "\n"
     for user in users:
         for username, val in user.items():
-            formatted_response.append(f"| @{username:<15} | {val.strftime('%d-%m-%Y %H:%M %Z'):<22} |\n")
+            formatted_response.append(f"| @{username:<15} | {val.strftime('%d.%m %H:%M'):<11} |\n")
 
     formatted_response += " "
-    formatted_response += "—" *43
+    formatted_response += "—" * 32
     formatted_response += "```"
     await interaction.response.send_message("".join(formatted_response))
 
