@@ -10,6 +10,7 @@ import datetime
 
 from util.ConfigHandler import ConfigHandler
 from util.TimezoneHandler import AsyncTimezoneHandler
+from util.LogHandler import LogHandler, LogType
 
 description = "A bot for PnD"
 
@@ -19,6 +20,7 @@ intents.message_content = True
 
 configHandler = ConfigHandler()
 timezoneHandler = AsyncTimezoneHandler()
+logHandler = LogHandler()
 
 token = configHandler.get_token()
 guild_id = configHandler.get_guild_id()
@@ -80,7 +82,7 @@ async def roll(interaction: discord.Interaction, dice: str, modifier: int = 0):
     result += f" = {total}"
 
     await interaction.response.send_message(f"```{interaction.user.display_name} rolled {dice}: {result}```")
-    print(f"{interaction.user} rolled {result}")
+    logHandler.write_to_log(LogType.INFO, f"{str(interaction.user)} rolled {dice}: {result}")
 
 
 @client.tree.command()
@@ -92,7 +94,7 @@ async def add_user(interaction: discord.Interaction, continent: Literal['America
     """Add user for time-zone commands"""
     timezone = f"{continent}/{city.capitalize()}"
 
-    print(f"Trying to add user: {interaction.user} with timezone: {timezone}")
+    (f"Trying to add user: {interaction.user} with timezone: {timezone}")
 
     if timezone not in pytz.all_timezones:
         await interaction.response.send_message("Provided timezone does not exist!")
