@@ -138,7 +138,9 @@ async def suggest_time(interaction: discord.Interaction, date_time: str):
     formatted_response += "—" * 32
     formatted_response += "```"
     await interaction.response.send_message("".join(formatted_response))
-
+    msg = await interaction.original_response()
+    await msg.add_reaction('✅')
+    await msg.add_reaction('❌')
 
 
 client.run(token)
