@@ -94,9 +94,10 @@ async def add_user(interaction: discord.Interaction, continent: Literal['America
     """Add user for time-zone commands"""
     timezone = f"{continent}/{city.capitalize()}"
 
-    (f"Trying to add user: {interaction.user} with timezone: {timezone}")
+    logHandler.write_to_log(LogType.INFO, f"Trying to add user: {interaction.user} with timezone: {timezone}")
 
     if timezone not in pytz.all_timezones:
+        logHandler.write_to_log(LogType.ERROR, f"User {interaction.user} tried to add a user with timezone: {timezone}")
         await interaction.response.send_message("Provided timezone does not exist!")
         return
     
@@ -114,21 +115,23 @@ async def add_user(interaction: discord.Interaction, continent: Literal['America
 )
 async def suggest_time(interaction: discord.Interaction, date_time: str):
     """Suggest a datetime and see what time it is for everyone else"""
-    print(f"User {interaction.user} has suggested time: {date_time}")
+    logHandler.write_to_log(LogType.INFO, f"User {interaction.user} has suggested time: {date_time}")
     
     timezone = await timezoneHandler.read_user(str(interaction.user))
     
     dt = timezoneHandler.date_from_string(date_time, timezone)
     if isinstance(dt, Exception):
+        logHandler.write_to_log(LogType.ERROR, f"User {interaction.user} caused error when converting string to datetime: {date_time}")
         await interaction.response.send_message("Pleaaseee provide a proper datetime")
         return
     
     users = await timezoneHandler.get_local_datetime_all(dt, str(interaction.user))
     if isinstance(users, Exception):
+        loghandler.write_to_log(LogType.ERROR, f"User {interaction.user} caused error when gettng local datetimes. Exception: {users}")
         await interaction.response.send_message("I'm sorry, but something fucky happened")
         return
 
-    formatted_response = [f"User {interaction.user.display_name} suggested time: {dt.strftime('%d.%m %H:%M')}\n``` "]
+    formatted_response = [f"User {interaction.user} suggested time: {dt.strftime('%a %d %b %Y,  %H:%M')}\n``` "]
     formatted_response += "—" * 32 + "\n"
     for user in users:
         for username, val in user.items():
