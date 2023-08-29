@@ -127,7 +127,7 @@ async def suggest_time(interaction: discord.Interaction, date_time: str):
     
     users = await timezoneHandler.get_local_datetime_all(dt, str(interaction.user))
     if isinstance(users, Exception):
-        loghandler.write_to_log(LogType.ERROR, f"User {interaction.user} caused error when gettng local datetimes. Exception: {users}")
+        logHandler.write_to_log(LogType.ERROR, f"User {interaction.user} caused error when gettng local datetimes. Exception: {users}")
         await interaction.response.send_message("I'm sorry, but something fucky happened")
         return
 
