@@ -28,5 +28,6 @@ A small bot for a private discord server.
 1. Clone the repo and navigate to it
 2. Add a `.secrets/` folder to the root directory of your project `mkdir .secrets/`
     1. Add two files: `touch .secrets/config.json` and `touch .secrets/users.json`
-    2. Add an empty JSON object to both and save, or copy from `Examples/` 
-4. Run using `python3.10 PungeounBot.py` or the Dockerfile provided
+    2. Add an empty JSON object to `users.json` or add a list of users with their timezone if you don't want to add them with commands
+    3. Follow the example for the config. You need a discord bot token and a guild ID for testing  
+3. Run using `python3.10 PungeounBot.py` or the Dockerfile provided
